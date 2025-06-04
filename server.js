@@ -6,6 +6,9 @@ const cors = require('cors');
 const { errorLog } = require('./middleware/errLog');
 const { corsOptions } = require('./config/corsOptions')
 const verifyJwt = require('./middleware/verifyJwt');
+const cookieParser = require('cookie-parser');
+const { credentials } = require('./middleware/credentials');
+
 // PORT number
 const PORT = process.env.PORT || 3500;
 
@@ -13,7 +16,7 @@ const PORT = process.env.PORT || 3500;
 // custom middleware logger.
 app.use(logger);
 
-
+app.use(credentials)
 app.use(cors(corsOptions));
 
 // To handle form data url encoded data when form data is submitted.
@@ -23,6 +26,8 @@ app.use(express.urlencoded({ extended: false }));
 // built in middleware for json data submitted.
 app.use(express.json());
 
+// 
+app.use(cookieParser());
 // serve static files
 app.use(express.static(path.join(__dirname, '/public')));
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
@@ -32,9 +37,12 @@ app.use('/', require('./routes/root'));
 // app.use('/subdir', require('./routes/subdir'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
+// First issue refresh token.
+app.use('/refresh', require('./routes/refresh'));
 // After register and auth only we need to verify JWT. This works as waterfall model.
 app.use(verifyJwt);
 app.use('/employees', require('./routes/api/employees'));
+app.use('/logout', require('./routes/logout'));
 
 // Route handlers
 app.get('/hello.html', (req, res, next) => {

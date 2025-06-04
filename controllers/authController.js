@@ -32,7 +32,7 @@ const authenticateUser = async (req, res) => {
         const accessToken = jwt.sign(
             { "username": userPresent.username },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '30s' }
+            { expiresIn: '180s' }
         )
         const refreshToken = jwt.sign(
             { "username": userPresent.username },
@@ -44,7 +44,7 @@ const authenticateUser = async (req, res) => {
         usersDB.setUser([...otherUsers, currentUser]);
         await fsPromises.writeFile(path.join(__dirname, '..', 'model', 'users.json'), JSON.stringify(usersDB.user));
         // Send refresh token as http only cookie which is not accessible by javascript. Non vulnurable.
-        res.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 });
+        res.cookie("jwt", refreshToken, { sameSite: 'None', secure: true, httpOnly: true, maxAge: 24 * 60 * 60 });
         // Send accesstoken directly 
         res.status(200).json({ accessToken })
     }
