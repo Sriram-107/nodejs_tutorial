@@ -10,8 +10,8 @@ require('dotenv').config();
 
 const verifyJwt = (req, res, next) => {
 
-    const headerToken = req.headers["authorization"]; // headerToken must be present to authorize the user.
-    if (!headerToken) {
+    const headerToken = req.headers.authorization || req.headers.Authorization; // headerToken must be present to authorize the user.
+    if (!headerToken?.startsWith("Bearer ")) {
         return res.sendStatus(401)
     }
     const jwtToken = headerToken.split(" ")[1]; // We get Bearer "token_number" so we split and seperate Bearer.
@@ -25,7 +25,8 @@ const verifyJwt = (req, res, next) => {
 
             return res.sendStatus(403)
         } // Invalid token not authorised.
-        req.user = decoded.user;
+        req.user = decoded.UserInfo.username;
+        req.roles = decoded.UserInfo.roles;
         next();
     })
 

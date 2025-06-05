@@ -28,9 +28,16 @@ const authenticateUser = async (req, res) => {
         return res.sendStatus(401);
     }
     else {
+        const roles = Object.values(userPresent.roles)
         // JWT token generation here
         const accessToken = jwt.sign(
-            { "username": userPresent.username },
+            {
+                "UserInfo": {
+                    "username": userPresent.username,
+                    // We are just sending the codes of roles in access token.
+                    "roles": roles
+                }
+            },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '180s' }
         )
