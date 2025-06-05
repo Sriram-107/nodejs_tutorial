@@ -24,6 +24,9 @@ const handleUser = async (req, res) => {
         const hashedPwd = await bcrypt.hash(pwd, 10); // hash the password so even if db is hacked no problem after 10 rounds of salting.
         const newUser = {
             "username": user,
+            "roles": {
+                "User": 1002
+            },
             "password": hashedPwd
         }
         console.log(newUser);
