@@ -7,21 +7,23 @@ const usersDB = {
 
 const jwt = require('jsonwebtoken');
 
-
-
 const handleRefreshToken = async (req, res) => {
+    // access cokies from the request body.
     const cookies = req.cookies;
     console.log(cookies);
+    // If the refresh token doesn't exist then bad request.
     if (!cookies?.jwt) {
         return res.sendStatus(401) // Bad request
     }
+    // Check refresh token is present in user database.
     const refreshToken = cookies.jwt;
     const userPresent = usersDB.user.find((person) => person.refreshToken === refreshToken);
+    // If user not present then unauthenticated.
     if (!userPresent) {
         return res.sendStatus(403); // Forbidden
     }
     console.log(userPresent);
-
+    // 
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
