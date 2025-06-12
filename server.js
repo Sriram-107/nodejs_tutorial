@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn')
 // PORT number
 const PORT = process.env.PORT || 3500;
-
+// Connect to mongodb database.
 connectDB();
 // Log every request first.
 // custom middleware logger.
@@ -27,10 +27,12 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 
 // built in middleware for json data submitted.
+// parse the incoming json string to javascript object.
 app.use(express.json());
 
-// 
+// In order to access cookies from request we use cookieParser.
 app.use(cookieParser());
+
 // serve static files
 app.use(express.static(path.join(__dirname, '/public')));
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
